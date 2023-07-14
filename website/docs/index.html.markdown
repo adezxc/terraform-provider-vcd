@@ -85,6 +85,8 @@ resource "vcd_network_routed" "net2" {
 }
 ```
 
+### More examples of authentication methods can be found in the guide [here][auth-guide]
+
 ### Connecting as Sys Admin with Default Org and VDC
 
 When you want to manage resources across different organizations but set a default one. 
@@ -419,4 +421,5 @@ minutes, and then connect again.
 [service-account]: /providers/vmware/vcd/latest/docs/resources/service_account
 [service-account-script]: https://github.com/vmware/terraform-provider-vcd/blob/main/scripts/create_service_account.sh
 [api-token]: /providers/vmware/vcd/latest/docs/resource/api_token
+[auth-guide]: /providers/vmware/vcd/latest/docs/guide/authentication_guide
 
