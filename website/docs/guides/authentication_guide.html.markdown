@@ -14,7 +14,7 @@ Terraform VCD Provider.
 Since Provider **v3.10.0** these are the supported methods of authentication 
 
 |Method|[`auth_type`][auth_type]|Environment Variable|Example|
-|------|-----------|--------------------|-------|
+|------|------------------------|--------------------|-------|
 |[User and password][userpassword]|`integrated`|`VCD_USER` `VCD_PASSWORD`|[Example][#connecting-as]|
 |[SAML ADFS][saml]|`saml_adfs`|`VCD_SAML_ADFS_RPT_ID`|[Example][saml_example]|
 |[Token][token]|`token`|`VCD_TOKEN`|[Example][token_example]|
@@ -25,7 +25,10 @@ Since Provider **v3.10.0** these are the supported methods of authentication
 ## Example usage
 
 [integrated_example]
-### Connecting using user and password
+### Connecting using username and password
+
+This is the most straightforward authentication method, 
+you just use the credentials that are used to login to the VCD Web UI.
 
 ```terraform
 # Configure the VMware Cloud Director Provider
@@ -44,10 +47,113 @@ provider "vcd" {
 resource "vcd_network_routed" "net" {
   # ...
 }
-```
+ ```
 
-### Connecting with
+[saml_example]
+### Connecting with SAML
 
+```terraform
+# Configure the VMware Cloud Director Provider
+provider "vcd" {
+  auth_type            = "saml_adfs"
+  saml_adfs_rpt_id     = var.saml_adfs_rpt_id
+  org                  = var.vcd_org
+  vdc                  = var.vcd_vdc
+  url                  = var.vcd_url
+  max_retry_timeout    = var.vcd_max_retry_timeout
+  allow_unverified_ssl = var.vcd_allow_unverified_ssl
+}
+
+# Create a new network in organization and VDC defined above
+resource "vcd_network_routed" "net" {
+  # ...
+}
+ ```
+
+[token_example]
+### Connecting with token
+
+```terraform
+# Configure the VMware Cloud Director Provider
+provider "vcd" {
+  auth_type            = "token"
+  token                = var.vcd_token
+  org                  = var.vcd_org
+  vdc                  = var.vcd_vdc
+  url                  = var.vcd_url
+  max_retry_timeout    = var.vcd_max_retry_timeout
+  allow_unverified_ssl = var.vcd_allow_unverified_ssl
+}
+
+# Create a new network in organization and VDC defined above
+resource "vcd_network_routed" "net" {
+  # ...
+}
+ ```
+
+[api_token_example]
+### Connecting with API token
+
+```terraform
+# Configure the VMware Cloud Director Provider
+provider "vcd" {
+  auth_type            = "api_token"
+  api_token            = var.vcd_api_token
+  org                  = var.vcd_org
+  vdc                  = var.vcd_vdc
+  url                  = var.vcd_url
+  max_retry_timeout    = var.vcd_max_retry_timeout
+  allow_unverified_ssl = var.vcd_allow_unverified_ssl
+}
+
+# Create a new network in organization and VDC defined above
+resource "vcd_network_routed" "net" {
+  # ...
+}
+ ```
+
+[api_token_file_example]
+### Connecting with API token file
+
+```terraform
+# Configure the VMware Cloud Director Provider
+provider "vcd" {
+  auth_type            = "integrated"
+  api_token_file       = "example_api_token.json"
+  vdc                  = var.vcd_vdc
+  url                  = var.vcd_url
+  max_retry_timeout    = var.vcd_max_retry_timeout
+  allow_unverified_ssl = var.vcd_allow_unverified_ssl
+}
+
+# Create a new network in organization and VDC defined above
+resource "vcd_network_routed" "net" {
+  # ...
+}
+ ```
+
+[service_account_token_file_example]
+### Connecting with Service Account token file
+
+```terraform
+# Configure the VMware Cloud Director Provider
+provider "vcd" {
+  auth_type                  = "service_account_token_file"
+  service_account_token_file = "example_sa_token.json"
+  org                        = var.vcd_org
+  vdc                        = var.vcd_vdc
+  url                        = var.vcd_url
+  max_retry_timeout          = var.vcd_max_retry_timeout
+  allow_unverified_ssl       = var.vcd_allow_unverified_ssl
+}
+
+# Create a new network in organization and VDC defined above
+resource "vcd_network_routed" "net" {
+  # ...
+}
+ ```
+
+~> **NOTE** If using `service_account_token_file` or `api_token_file`, the files need to be  
 
 [auth_type]: /providers/vmware/vcd/latest/docs#auth_type
 [userpassword]: /providers/vmware/vcd/latest/docs#user
@@ -56,13 +162,4 @@ resource "vcd_network_routed" "net" {
 [api_token]: /providers/vmware/vcd/latest/docs#api_token
 [api_token_file]: /providers/vmware/vcd/latest/docs#api_token_file
 [sa_token_file]: /providers/vmware/vcd/latest/docs#service_account_token_file
-
-
-
-
-
-
-
-
-
 
