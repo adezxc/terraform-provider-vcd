@@ -15,16 +15,15 @@ Since Provider **v3.10.0** these are the supported methods of authentication
 
 |Method|[`auth_type`][auth_type]|Environment Variable|Example|
 |------|------------------------|--------------------|-------|
-|[User and password][userpassword]|`integrated`|`VCD_USER` `VCD_PASSWORD`|[Example][#connecting-as]|
-|[SAML ADFS][saml]|`saml_adfs`|`VCD_SAML_ADFS_RPT_ID`|[Example][saml_example]|
-|[Token][token]|`token`|`VCD_TOKEN`|[Example][token_example]|
-|[API Token][api_token]|`api_token`|`VCD_USER` `VCD_PASSWORD`|[Example][api_token_example]|
-|[API Token file][api_token_file]|`api_token_file`|`VCD_USER` `VCD_PASSWORD`|[Example][api_token_file_example]|
-|[Service Account Token File][sa_token_file]|`service_account_token_file`|`VCD_USER` `VCD_PASSWORD`|[Example][sa_token_file_example]|
+|[User and password][userpassword]|`integrated`|`VCD_USER` `VCD_PASSWORD`|[Example](#connecting-using-username-and-password)|
+|[SAML ADFS][saml]|`saml_adfs`|`VCD_SAML_ADFS_RPT_ID`|[Example](#connecting-with-saml)|
+|[Token][token]|`token`|`VCD_TOKEN`|[Example](#connecting-with-token)|
+|[API Token][api_token]|`api_token`|`VCD_USER` `VCD_PASSWORD`|[Example](#connecting-with-api-token)|
+|[API Token file][api_token_file]|`api_token_file`|`VCD_USER` `VCD_PASSWORD`|[Example](#connecting-with-api-token-file)|
+|[Service Account Token File][sa_token_file]|`service_account_token_file`|`VCD_USER` `VCD_PASSWORD`|[Example](#connecting-with-service-account-token-file)|
 
 ## Example usage
 
-[integrated_example]
 ### Connecting using username and password
 
 This is the most straightforward authentication method, 
@@ -49,7 +48,6 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-[saml_example]
 ### Connecting with SAML
 
 ```terraform
@@ -70,7 +68,6 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-[token_example]
 ### Connecting with token
 
 ```terraform
@@ -91,7 +88,6 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-[api_token_example]
 ### Connecting with API token
 
 ```terraform
@@ -112,7 +108,6 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-[api_token_file_example]
 ### Connecting with API token file
 
 ```terraform
@@ -132,7 +127,6 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-[service_account_token_file_example]
 ### Connecting with Service Account token file
 
 ```terraform
@@ -153,7 +147,11 @@ resource "vcd_network_routed" "net" {
 }
  ```
 
-~> **NOTE** If using `service_account_token_file` or `api_token_file`, the files need to be  
+You can create a service account using the [`vcd_service_account`][service_account_resource] service_account_resource
+  or if you don't want to manage it using Terraform, through a [script][service_account_script] residing in the provider repository.
+
+~> **NOTE** If using `service_account_token_file` or `api_token_file`, the files
+  need to be in JSON format,  
 
 [auth_type]: /providers/vmware/vcd/latest/docs#auth_type
 [userpassword]: /providers/vmware/vcd/latest/docs#user
@@ -162,4 +160,6 @@ resource "vcd_network_routed" "net" {
 [api_token]: /providers/vmware/vcd/latest/docs#api_token
 [api_token_file]: /providers/vmware/vcd/latest/docs#api_token_file
 [sa_token_file]: /providers/vmware/vcd/latest/docs#service_account_token_file
+[service_account_resource]: /providers/vmware/vcd/latest/docs/resources/service_account
+[service_account_script]: https://github.com/vmware/terraform-provider-vcd/blob/main/scripts/create_service_account.sh
 
