@@ -3,6 +3,7 @@ package vcd
 import (
 	"context"
 	"fmt"
+	"github.com/vmware/go-vcloud-director/v2/govcd"
 	"os"
 	"regexp"
 
@@ -125,8 +126,11 @@ var globalDataSourceMap = map[string]*schema.Resource{
 	"vcd_ip_space_ip_allocation":                    datasourceVcdIpAllocation(),                     // 3.10
 	"vcd_ip_space_custom_quota":                     datasourceVcdIpSpaceCustomQuota(),               // 3.10
 	"vcd_nsxt_edgegateway_dhcp_forwarding":          datasourceVcdNsxtEdgegatewayDhcpForwarding(),    // 3.10
+	"vcd_nsxt_edgegateway_dhcpv6":                   datasourceVcdNsxtEdgegatewayDhcpV6(),            // 3.10
 	"vcd_org_saml":                                  datasourceVcdOrgSaml(),                          // 3.10
 	"vcd_org_saml_metadata":                         datasourceVcdOrgSamlMetadata(),                  // 3.10
+	"vcd_nsxt_distributed_firewall_rule":            datasourceVcdNsxtDistributedFirewallRule(),      // 3.10
+	"vcd_nsxt_edgegateway_static_route":             datasourceVcdNsxtEdgeGatewayStaticRoute(),       // 3.10
 	"vcd_resource_pool":                             datasourceVcdResourcePool(),                     // 3.10
 	"vcd_network_pool":                              datasourceVcdNetworkPool(),                      // 3.10
 	"vcd_ui_plugin":                                 datasourceVcdUIPlugin(),                         // 3.10
@@ -223,7 +227,10 @@ var globalResourceMap = map[string]*schema.Resource{
 	"vcd_ip_space_ip_allocation":                    resourceVcdIpAllocation(),                     // 3.10
 	"vcd_ip_space_custom_quota":                     resourceVcdIpSpaceCustomQuota(),               // 3.10
 	"vcd_nsxt_edgegateway_dhcp_forwarding":          resourceVcdNsxtEdgegatewayDhcpForwarding(),    // 3.10
+	"vcd_nsxt_edgegateway_dhcpv6":                   resourceVcdNsxtEdgegatewayDhcpV6(),            // 3.10
 	"vcd_org_saml":                                  resourceVcdOrgSaml(),                          // 3.10
+	"vcd_nsxt_distributed_firewall_rule":            resourceVcdNsxtDistributedFirewallRule(),      // 3.10
+	"vcd_nsxt_edgegateway_static_route":             resourceVcdNsxtEdgeGatewayStaticRoute(),       // 3.10
 	"vcd_provider_vdc":                              resourceVcdProviderVdc(),                      // 3.10
 	"vcd_cloned_vapp":                               resourceVcdClonedVApp(),                       // 3.10
 	"vcd_ui_plugin":                                 resourceVcdUIPlugin(),                         // 3.10
@@ -370,6 +377,7 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("VCD_IMPORT_SEPARATOR", "."),
 				Description: "Defines the import separation string to be used with 'terraform import'",
 			},
+			"ignore_metadata_changes": ignoreMetadataSchema(),
 		},
 		ResourcesMap:         globalResourceMap,
 		DataSourcesMap:       globalDataSourceMap,
@@ -482,6 +490,18 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	} else {
 		ImportSeparator = d.Get("import_separator").(string)
 	}
+
+	ignoredMetadata, err := getIgnoredMetadata(d, "ignore_metadata_changes")
+	if err != nil {
+		return nil, diag.Errorf("could not process the metadata that needs to be ignored: %s", err)
+	}
+	config.IgnoredMetadata = make([]govcd.IgnoredMetadata, len(ignoredMetadata))
+	IgnoreMetadataChangesConflictActions = map[string]string{}
+	for i, im := range ignoredMetadata {
+		config.IgnoredMetadata[i] = ignoredMetadata[i].IgnoredMetadata
+		IgnoreMetadataChangesConflictActions[im.IgnoredMetadata.String()] = ignoredMetadata[i].ConflictAction
+	}
+
 	vcdClient, err := config.Client()
 	if err != nil {
 		return nil, diag.FromErr(err)

@@ -185,6 +185,7 @@ type TestConfig struct {
 		UploadProgress      bool   `json:"uploadProgress,omitempty"`
 		MediaName           string `json:"mediaName,omitempty"`
 		NsxtBackedMediaName string `json:"nsxtBackedMediaName,omitempty"`
+		UiPluginPath        string `json:"uiPluginPath,omitempty"`
 	} `json:"media"`
 	Certificates struct {
 		Certificate1Path           string `json:"certificate1Path,omitempty"`           // absolute path to pem file
@@ -325,6 +326,7 @@ provider "vcd" {
   #version             = "~> {{.VersionRequired}}"
   logging              = {{.Logging}}
   logging_file         = "{{.LoggingFile}}"
+  {{.IgnoreMetadataBlock}}
 }
 `
 )
@@ -445,6 +447,9 @@ func templateFill(tmpl string, data StringMap) string {
 			data["LoggingFile"] = testConfig.Logging.LogFileName
 		} else {
 			data["LoggingFile"] = util.ApiLogFileName
+		}
+		if _, found = data["IgnoreMetadataBlock"]; !found {
+			data["IgnoreMetadataBlock"] = ""
 		}
 
 		// Pick correct auth_type
@@ -691,6 +696,13 @@ func getConfigStruct(config string) TestConfig {
 			panic("error retrieving absolute path for Media path " + configStruct.Media.MediaPath)
 		}
 		configStruct.Media.MediaPath = mediaPath
+	}
+	if configStruct.Media.UiPluginPath != "" {
+		uiPluginPath, err := filepath.Abs(configStruct.Media.UiPluginPath)
+		if err != nil {
+			panic("error retrieving absolute path for UI plugin path " + configStruct.Media.UiPluginPath)
+		}
+		configStruct.Media.UiPluginPath = uiPluginPath
 	}
 	if configStruct.Ova.OvaVappMultiVmsPath != "" {
 		multiVmOvaPath, err := filepath.Abs(configStruct.Ova.OvaVappMultiVmsPath)
