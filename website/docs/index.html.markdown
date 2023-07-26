@@ -27,7 +27,9 @@ The following Cloud Director versions are supported by this provider:
 
 Also Cloud Director Service (CDS) is supported.
 
-## Example Usage
+## Authentication 
+
+!> Hard-coded credentials are not recommended in any Terraform configuration and risks secret leakage should this file ever be committed to a public version control system.
 
 ### Connecting as Org Admin
 
