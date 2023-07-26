@@ -30,8 +30,6 @@ Also Cloud Director Service (CDS) is supported.
 
 ## Authentication 
 
-!> Hard-coded credentials are not recommended in any Terraform configuration and risks secret leakage should this file ever be committed to a public version control system.
-
 ### Connecting as Org Admin
 
 The most common - tenant - use case when you set user to organization administrator and when all resources are in a single organization. 
